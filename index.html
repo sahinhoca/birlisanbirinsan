@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soru Çöz - Premium Edition (Cloud)</title>
+    <!-- Tailwind CSS ve Lucide İkonları -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            background: #f0f9ff;
+        }
+
+        /* --- GÜNDÜZ MODU (LIGHT MODE) --- */
+        html:not(.dark) body { background-color: #f0f9ff; color: #000000; }
+        html:not(.dark) .bg-white,
+        html:not(.dark) .bg-slate-50,
+        html:not(.dark) .glass-card { background-color: #e0f2fe !important; border-color: #bae6fd !important; }
+        html:not(.dark) .text-slate-900,
+        html:not(.dark) .text-slate-800,
+        html:not(.dark) .text-slate-700,
+        html:not(.dark) .text-slate-600,
+        html:not(.dark) .text-slate-500,
+        html:not(.dark) .text-slate-400 { color: #000000 !important; }
+        html:not(.dark) .auth-input, 
+        html:not(.dark) input, 
+        html:not(.dark) textarea, 
+        html:not(.dark) select { color: #000000 !important; background-color: #f0f9ff !important; border-color: #bae6fd !important; }
+
+        /* --- GECE MODU (DARK MODE) CSS --- */
+        html.dark body { background-color: #0f172a; color: #ffffff; }
+        html.dark .bg-animated {
+            background-color: #0f172a;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(167, 139, 250, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(244, 63, 94, 0.05) 0px, transparent 80%);
+        }
+        html.dark .glass-card { background: rgba(30, 41, 59, 0.7); border-color: #334155; }
+        html.dark .bg-white { background-color: #1e293b !important; border-color: #334155 !important; }
+        html.dark .bg-slate-50, html.dark .bg-slate-100, html.dark .bg-slate-200 { background-color: #0f172a !important; border-color: #1e293b !important; }
+        
+        /* Gece modunda tüm yazılar bembeyaz */
+        html.dark .text-slate-900, html.dark .text-slate-800, 
+        html.dark .text-slate-700, html.dark .text-slate-600, 
+        html.dark .text-slate-500, html.dark .text-slate-400, 
+        html.dark .text-slate-300, html.dark .text-slate-200, 
+        html.dark .text-slate-100 { color: #ffffff !important; }
+        html.dark .auth-input, 
+        html.dark input, 
+        html.dark textarea, 
+        html.dark select { color: #ffffff !important; }
+
+        html.dark .bg-slate-900 { background-color: #e2e8f0 !important; color: #0f172a !important; }
+        html.dark .hover\:bg-black:hover { background-color: #ffffff !important; }
+        html.dark .auth-input { background: rgba(15, 23, 42, 0.9) !important; border-color: #334155 !important; }
+        html.dark .bg-indigo-50 { background-color: rgba(99, 102, 241, 0.15) !important; }
+        html.dark .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.15) !important; }
+        html.dark .bg-rose-50 { background-color: rgba(244, 63, 94, 0.15) !important; }
+        html.dark .bg-white\/50 { background-color: rgba(30, 41, 59, 0.5) !important; }
+        html.dark .bg-white\/40 { background-color: rgba(30, 41, 59, 0.4) !important; }
+        html.dark .bg-white\/80 { background-color: rgba(30, 41, 59, 0.8) !important; }
+        html.dark .bg-white\/20 { background-color: rgba(30, 41, 59, 0.2) !important; }
+        html.dark .border-slate-50, html.dark .border-slate-100, html.dark .border-slate-200, html.dark .border-white { border-color: #334155 !important; }
+        html.dark .border-transparent { border-color: transparent !important; }
+        
+        /* Renk Düzeltmeleri */
+        html.dark .text-indigo-600 { color: #818cf8 !important; }
+        html.dark .text-emerald-600, html.dark .text-emerald-700 { color: #34d399 !important; }
+        html.dark .text-rose-600, html.dark .text-rose-500 { color: #fb7185 !important; }
+        html.dark .correct-pop { background: rgba(16, 185, 129, 0.15) !important; border-color: #10b981 !important; color: #34d399 !important; }
+        html.dark .wrong-shake { background: rgba(239, 68, 68, 0.15) !important; border-color: #ef4444 !important; }
+
+        /* Dinamik Yumuşak Mesh Arka Plan */
+        .bg-animated {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(167, 139, 250, 0.05) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(244, 63, 94, 0.02) 0px, transparent 80%);
+            background-color: #f8fafc;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.04);
+        }
+
+        .animate-reveal { animation: reveal 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards; }
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(40px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* --- BUTON & SINAV ANİMASYONLARI --- */
+        .btn-press { transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-press:active { transform: scale(0.97); }
+        
+        .lesson-card { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .correct-pop { animation: correct-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; background: rgba(16, 185, 129, 0.04) !important; border-color: #10b981 !important; box-shadow: 0 4px 20px -5px rgba(16, 185, 129, 0.3); }
+        @keyframes correct-pop { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        .wrong-shake { animation: wrong-shake 0.4s cubic-bezier(.36,.07,.19,.97) both; background: rgba(239, 68, 68, 0.08) !important; border-color: #ef4444 !important; box-shadow: 0 4px 20px -5px rgba(239, 68, 68, 0.3); }
+        @keyframes wrong-shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-3px, 0, 0); } 40%, 60% { transform: translate3d(3px, 0, 0); } }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        html.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+        
+        .auth-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem 1.25rem 3.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #f1f5f9;
+            border-radius: 1.5rem;
+            outline: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .auth-input:focus { border-color: #818cf8; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+
+        /* Gece/Gündüz Butonu */
+        .theme-toggle {
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;
+            width: 4rem; height: 4rem; border-radius: 50%;
+            background: white; border: 1px solid #e2e8f0;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        html.dark .theme-toggle { background: #1e293b; border-color: #334155; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); }
+        .theme-toggle:active { transform: scale(0.9); }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800">
+
+    <div class="bg-animated"></div>
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Başlangıç Yükleme Ekranı -->
+        <div class="min-h-screen flex flex-col items-center justify-center">
+            <div class="w-20 h-20 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-6"></div>
+            <div class="text-xl font-bold text-indigo-600 tracking-widest uppercase animate-pulse">Sistem Başlatılıyor...</div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Import -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- SÜPER YÖNETİCİ E-POSTASI ---
+        const SUPER_ADMIN_EMAIL = "s-sahin-07@hotmail.com"; 
+
+        // Uygulama Durumu (State)
+        let state = {
+            step: 'welcome', 
+            viewingCategoryPath: [], // Sınırsız hiyerarşi için dizi örneğin: ['c1', 'c2']
+            activeCategoryId: null, // Sınavı çözülen son klasör
+            currentIdx: 0,
+            score: 0,
+            timeLeft: 30,
+            isConfirmed: false,
+            selectedIdx: null,
+            timerInterval: null,
+            
+            adminTab: 'lessons', // lessons, questions, invites
+            adminAddMode: 'single', 
+            bulkMessage: { type: '', text: '' },
+            deleteConfirmId: null,
+            
+            questionFilterId: '', // Soru listesi için kategori filtresi
+            bulkDeleteConfirm: false, // Seçili testin/kategorinin tüm sorularını silme onayı
+            
+            currentUser: null,
+            authTab: 'login',
+            authError: '',
+            authSuccess: '',
+            showProfileModal: false,
+            profileError: '',
+            profileSuccess: '',
+            
+            isDark: localStorage.getItem('quiz_theme') === 'dark'
+        };
+
+        window.state = state;
+
+        if (state.isDark) document.documentElement.classList.add('dark');
+
+        window.toggleTheme = () => {
+            state.isDark = !state.isDark;
+            if (state.isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('quiz_theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('quiz_theme', 'light');
+            }
+            window.render();
+        };
+
+        const escapeStr = (str) => String(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+        let inviteCodes = [];
+        let lessons = [];
+        let questions = [];
+        let users = [];
+
+        let db, auth, basePath;
+        const appElement = document.getElementById('app');
+        
+        let loadedFlags = { lessons: false, questions: false, users: false, inviteCodes: false };
+        let isAppReady = false;
+
+        const checkInitialLoad = () => {
+            if (loadedFlags.lessons && loadedFlags.questions && loadedFlags.users && loadedFlags.inviteCodes && !isAppReady) {
+                isAppReady = true;
+                if (inviteCodes.length === 0) {
+                    setDoc(doc(db, basePath, 'inviteCodes', 'SAHIN07'), { code: 'SAHIN07', used: false, usedBy: null });
+                }
+                window.render();
+            } else if (isAppReady) {
+                window.render();
+            }
+        };
+
+        // BULUT (FIREBASE) BAĞLANTISINI BAŞLAT
+        const initCloudApp = async () => {
+            try {
+                // =========================================================================
+                const firebaseConfig = {
+                  apiKey: "AIzaSyBrn6MYN8GnhoDqB0et6j3AwDANDk1eLdc",
+                  authDomain: "sorucoz-20ca2.firebaseapp.com",
+                  projectId: "sorucoz-20ca2",
+                  storageBucket: "sorucoz-20ca2.appspot.com",
+                  messagingSenderId: "823651883599",
+                  appId: "1:823651883599:web:0cccf5d427c95c4cd8683a"
+                };
+                // =========================================================================
+
+                const appFirebase = initializeApp(firebaseConfig);
+                auth = getAuth(appFirebase);
+                db = getFirestore(appFirebase);
+                basePath = `artifacts/sorucoz_app/public/data`; 
+
+                await signInAnonymously(auth);
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        onSnapshot(collection(db, basePath, 'lessons'), (snapshot) => {
+                            lessons = snapshot.docs.map(doc => doc.data());
+                            loadedFlags.lessons = true; checkInitialLoad();
+                        }, (err) => console.error(err));
+
+                        onSnapshot(collection(db, basePath, 'questions'), (snapshot) => {
+                            questions = snapshot.docs.map(doc => doc.data());
+                            loadedFlags.questions = true; checkInitialLoad();
+                        }, (err) => console.error(err));
+
+                        onSnapshot(collection(db, basePath, 'users'), (snapshot) => {
+                            users = snapshot.docs.map(doc => doc.data());
+                            loadedFlags.users = true; checkInitialLoad();
+                        }, (err) => console.error(err));
+
+                        onSnapshot(collection(db, basePath, 'inviteCodes'), (snapshot) => {
+                            inviteCodes = snapshot.docs.map(doc => doc.data());
+                            loadedFlags.inviteCodes = true; checkInitialLoad();
+                        }, (err) => console.error(err));
+                    }
+                });
+
+            } catch (error) {
+                appElement.innerHTML = `
+                    <div class="min-h-screen flex items-center justify-center p-6">
+                        <div class="bg-white p-12 rounded-[3rem] shadow-2xl text-center max-w-lg border border-slate-100">
+                            <div class="w-24 h-24 bg-rose-100 text-rose-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
+                                <i data-lucide="cloud-off" class="w-12 h-12"></i>
+                            </div>
+                            <h2 class="text-3xl font-black text-slate-800 mb-4">Bağlantı Hatası</h2>
+                            <p class="text-slate-500 font-medium">Veritabanına ulaşılamadı. Ayarları kontrol edin.</p>
+                        </div>
+                    </div>`;
+                lucide.createIcons();
+            }
+        };
+
+        // --- GÖRSEL EFEKTLER (MİNİ NOVA & DEV KONFETİ) ---
+        window.createMiniNova = (originX, originY) => {
+            const container = document.createElement('div');
+            container.className = 'fixed z-[100] pointer-events-none';
+            container.style.left = `${originX}px`; container.style.top = `${originY}px`;
+            
+            container.innerHTML = `<div class="absolute rounded-full border-[3px] border-emerald-400" style="transform: translate(-50%, -50%); animation: ring-expand-mini 0.7s cubic-bezier(0.16,1,0.3,1) forwards;"></div>`;
+            
+            const colors = ['#10b981', '#34d399', '#6366f1', '#a78bfa', '#ffffff', '#fde047'];
+            let styleHTML = '<style>';
+            for (let i = 0; i < 30; i++) {
+                const type = Math.random();
+                const size = type > 0.85 ? Math.random() * 12 + 6 : type > 0.4 ? Math.random() * 10 + 4 : Math.random() * 6 + 2;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 30 + Math.random() * 60;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                const txEnd = tx + (Math.cos(angle) * 30) + (Math.random() * 20 - 10);
+                const tyEnd = ty + (Math.sin(angle) * 30) + Math.random() * 20;
+                const rot = Math.random() * 180;
+                const s = Math.random() * 0.4 + 0.8;
+                
+                const p = document.createElement('div');
+                p.className = 'absolute';
+                p.style.width = `${size}px`; p.style.height = `${size}px`;
+                p.style.animation = `nova-float-mini-${i} 1.2s cubic-bezier(0.1, 0.9, 0.2, 1) forwards`;
+                
+                if (type > 0.85) {
+                   p.style.clipPath = 'polygon(50% 0%, 55% 45%, 100% 50%, 55% 55%, 50% 100%, 45% 55%, 0% 50%, 45% 45%)';
+                   p.style.backgroundColor = '#ffffff';
+                } else if (type > 0.4) {
+                   p.style.borderRadius = '50%'; p.style.filter = 'blur(2px)'; p.style.backgroundColor = color;
+                } else {
+                   p.style.borderRadius = '50%'; p.style.backgroundColor = color; p.style.boxShadow = `0 0 ${size/2}px ${color}88`;
+                }
+
+                styleHTML += `
+                @keyframes nova-float-mini-${i} {
+                    0% { transform: translate3d(-50%, -50%, 0) scale(0) rotate(0deg); opacity: 1; }
+                    25% { transform: translate3d(${tx}px, ${ty}px, 0) scale(${s}) rotate(${rot}deg); opacity: 1; }
+                    100% { transform: translate3d(${txEnd}px, ${tyEnd}px, 0) scale(${s * 0.4}) rotate(${rot * 2}deg); opacity: 0; }
+                }`;
+                container.appendChild(p);
+            }
+            styleHTML += `@keyframes ring-expand-mini { 0% { width: 20px; height: 20px; opacity: 1; border-width: 4px; } 100% { width: 120px; height: 120px; opacity: 0; border-width: 0px; } }</style>`;
+            container.innerHTML += styleHTML;
+            document.body.appendChild(container);
+            setTimeout(() => container.remove(), 1200);
+        };
+
+        window.createGrandConfetti = () => {
+            const container = document.createElement('div');
+            container.className = 'fixed inset-0 pointer-events-none z-[100] flex items-center justify-center overflow-hidden';
+            container.id = 'confetti-container';
+            container.innerHTML += `
+                <div class="absolute rounded-full border-[6px] border-emerald-400" style="animation: ring-expand 0.8s ease-out forwards;"></div>
+                <div class="absolute rounded-full border-[6px] border-yellow-400" style="animation: ring-expand 0.8s ease-out 0.2s forwards;"></div>
+                <div class="absolute rounded-full border-[6px] border-indigo-400" style="animation: ring-expand 0.8s ease-out 0.4s forwards;"></div>
+            `;
+            const colors = ['#10b981', '#34d399', '#6366f1', '#a78bfa', '#ffffff', '#fde047', '#f43f5e', '#fbbf24'];
+            let styleHTML = '<style>';
+            for(let i=0; i<150; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = 15 + Math.random() * 35;
+                const size = 6 + Math.random() * 12;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const rot = Math.random() * 360;
+                const shape = Math.random() > 0.4 ? '50%' : '2px';
+                
+                const p = document.createElement('div');
+                p.className = 'absolute';
+                p.style.width = `${size}px`; p.style.height = `${size}px`;
+                p.style.backgroundColor = color; p.style.borderRadius = shape;
+                p.style.boxShadow = `0 0 ${size/2}px ${color}88`;
+                p.style.animation = `confetti-blast-${i} ${2 + Math.random() * 2}s cubic-bezier(0.1, 0.9, 0.2, 1) forwards`;
+                
+                styleHTML += `
+                @keyframes confetti-blast-${i} {
+                    0% { transform: scale(0) rotate(0deg); opacity: 1; }
+                    25% { transform: translate(${Math.cos(angle) * velocity}vw, ${Math.sin(angle) * velocity}vh) scale(1) rotate(${rot + 180}deg); opacity: 1; }
+                    100% { transform: translate(${Math.cos(angle) * (velocity + 15)}vw, ${(Math.sin(angle) * (velocity + 15)) + 30}vh) scale(0) rotate(${rot + 720}deg); opacity: 0; }
+                }
+                `;
+                container.appendChild(p);
+            }
+            styleHTML += `@keyframes ring-expand { 0% { width: 0; height: 0; opacity: 1; border-width: 10px; } 100% { width: 150vw; height: 150vw; opacity: 0; border-width: 0px; } }</style>`;
+            container.innerHTML += styleHTML;
+            document.body.appendChild(container);
+            setTimeout(() => {
+                const el = document.getElementById('confetti-container');
+                if (el) el.remove();
+            }, 4500);
+        };
+
+        // --- NAVİGASYON VE SINAV AKIŞI ---
+        const startTimer = () => {
+            clearInterval(state.timerInterval);
+            state.timeLeft = 30;
+            state.timerInterval = setInterval(() => {
+                state.timeLeft--;
+                const el = document.getElementById('timer-val');
+                if (el) el.innerText = state.timeLeft + 's';
+                if (state.timeLeft <= 0) window.handleAnswer(null);
+            }, 1000);
+        };
+
+        window.navigate = (step, payload = null) => {
+            state.step = step;
+            state.deleteConfirmId = null;
+            state.authError = '';
+            state.authSuccess = '';
+            state.showProfileModal = false;
+            
+            if (step === 'quiz' && payload) {
+                state.activeCategoryId = payload;
+                state.currentIdx = 0;
+                state.score = 0;
+                state.isConfirmed = false;
+                state.selectedIdx = null;
+                startTimer();
+            } else if (step !== 'quiz') {
+                clearInterval(state.timerInterval);
+            }
+            window.render();
+        };
+
+        window.navigateToPathIndex = (index) => {
+            if (index === -1) state.viewingCategoryPath = [];
+            else state.viewingCategoryPath = state.viewingCategoryPath.slice(0, index + 1);
+            window.render();
+        };
+
+        window.handleLessonClick = (id) => {
+            state.viewingCategoryPath.push(id);
+            window.render();
+        };
+
+        window.handleAnswer = (idx, event = null) => {
+            if (state.isConfirmed) return;
+            clearInterval(state.timerInterval);
+            state.selectedIdx = idx;
+            state.isConfirmed = true;
+
+            const lessonQs = questions.filter(q => q.lessonId === state.activeCategoryId);
+            const q = lessonQs[state.currentIdx];
+
+            if (idx === q.correct) {
+                state.score++;
+                if (event) {
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    window.createMiniNova(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                }
+            }
+            window.render();
+        };
+
+        window.nextQ = () => {
+            const lessonQs = questions.filter(q => q.lessonId === state.activeCategoryId);
+            if (state.currentIdx < lessonQs.length - 1) {
+                state.currentIdx++;
+                state.isConfirmed = false;
+                state.selectedIdx = null;
+                startTimer();
+                window.render();
+            } else {
+                window.endQuizEarly();
+            }
+        };
+
+        window.endQuizEarly = () => {
+            clearInterval(state.timerInterval);
+            const lessonQs = questions.filter(q => q.lessonId === state.activeCategoryId);
+            const perc = Math.round((state.score / lessonQs.length) * 100);
+            if (perc >= 80) setTimeout(window.createGrandConfetti, 100);
+            window.navigate('results');
+        };
+
+        // --- AUTH: BULUT TABANLI GİRİŞ ---
+        window.handleAuth = async (e) => {
+            e.preventDefault();
+            const email = e.target.email?.value;
+            const password = e.target.password?.value;
+
+            if (state.authTab === 'login') {
+                const user = users.find(u => u.email === email && u.password === password);
+                if (user) {
+                    state.currentUser = user;
+                    state.authError = ''; state.authSuccess = '';
+                    if (user.email !== SUPER_ADMIN_EMAIL && state.adminTab === 'invites') state.adminTab = 'lessons';
+                    window.navigate('admin'); 
+                } else {
+                    state.authError = 'E-posta veya şifre hatalı!'; window.render();
+                }
+            } else if (state.authTab === 'register') {
+                const inviteCode = e.target.inviteCode.value.toUpperCase();
+                const validCodeObj = inviteCodes.find(c => c.code === inviteCode);
+                
+                if (!validCodeObj || validCodeObj.used) {
+                    state.authError = 'Geçersiz veya daha önce kullanılmış davetiye kodu!'; window.render(); return;
+                }
+                if (users.find(u => u.email === email)) {
+                    state.authError = 'Bu e-posta adresi zaten kayıtlı!'; window.render();
+                } else {
+                    validCodeObj.used = true; validCodeObj.usedBy = email;
+                    const newUser = { email, password, isActive: true, registeredCode: inviteCode };
+                    await setDoc(doc(db, basePath, 'inviteCodes', inviteCode), validCodeObj);
+                    await setDoc(doc(db, basePath, 'users', email), newUser);
+                    state.currentUser = newUser; state.authError = '';
+                    if (email !== SUPER_ADMIN_EMAIL && state.adminTab === 'invites') state.adminTab = 'lessons';
+                    window.navigate('admin');
+                }
+            } else if (state.authTab === 'forgot') {
+                const inviteCode = e.target.inviteCode.value.toUpperCase();
+                const newPassword = e.target.newPassword.value;
+                const userObj = users.find(u => u.email === email);
+                if (userObj) {
+                    if (userObj.registeredCode !== inviteCode) {
+                        state.authError = 'Bu hesap için güvenlik kodu yanlış!'; window.render(); return;
+                    }
+                    userObj.password = newPassword;
+                    await setDoc(doc(db, basePath, 'users', email), userObj);
+                    state.authError = ''; state.authSuccess = 'Şifreniz güncellendi! Lütfen giriş yapın.';
+                    state.authTab = 'login'; window.render();
+                } else {
+                    state.authError = 'Hesap bulunamadı!'; window.render();
+                }
+            }
+        };
+
+        window.handleUpdatePassword = async (e) => {
+            e.preventDefault();
+            const oldPass = e.target.oldPass.value;
+            const newPass = e.target.newPass.value;
+
+            if (state.currentUser.password !== oldPass) {
+                state.profileError = 'Mevcut şifreniz yanlış!'; window.render(); return;
+            }
+            const userObj = users.find(u => u.email === state.currentUser.email);
+            if (userObj) {
+                userObj.password = newPass; state.currentUser.password = newPass;
+                await setDoc(doc(db, basePath, 'users', state.currentUser.email), userObj);
+                state.profileError = ''; state.profileSuccess = 'Şifreniz başarıyla değiştirildi!';
+                e.target.reset(); window.render();
+                setTimeout(() => { state.showProfileModal = false; state.profileSuccess = ''; window.render(); }, 2000);
+            }
+        };
+
+        window.logout = () => { state.currentUser = null; window.navigate('welcome'); };
+
+        window.generateInviteCode = async () => {
+            const newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            await setDoc(doc(db, basePath, 'inviteCodes', newCode), { code: newCode, used: false, usedBy: null });
+        };
+        window.deleteInviteCode = async (code) => await deleteDoc(doc(db, basePath, 'inviteCodes', code));
+
+        // --- ADMİN İŞLEMLERİ (BULUT) ---
+        window.addLesson = async (e) => {
+            e.preventDefault();
+            const name = e.target.lessonName.value;
+            const parentId = e.target.parentId.value || null; 
+            const id = 'c' + Date.now();
+            await setDoc(doc(db, basePath, 'lessons', id), { id, name, parentId });
+            e.target.reset(); 
+        };
+
+        window.promptDeleteLesson = (id) => { state.deleteConfirmId = id; window.render(); };
+        window.cancelDelete = () => { state.deleteConfirmId = null; window.render(); };
+
+        window.confirmDeleteLesson = async () => {
+            const id = state.deleteConfirmId;
+            let idsToDelete = [id];
+            let currentIds = [id];
+            
+            while (currentIds.length > 0) {
+                const children = lessons.filter(c => currentIds.includes(c.parentId)).map(c => c.id);
+                idsToDelete = [...idsToDelete, ...children];
+                currentIds = children;
+            }
+
+            for(let lId of idsToDelete) {
+                await deleteDoc(doc(db, basePath, 'lessons', lId));
+                const qsToDelete = questions.filter(q => q.lessonId === lId);
+                for(let q of qsToDelete) {
+                    await deleteDoc(doc(db, basePath, 'questions', q.id.toString()));
+                }
+            }
+            
+            if (state.viewingCategoryPath.some(pathId => idsToDelete.includes(pathId))) {
+                state.viewingCategoryPath = [];
+            }
+            state.deleteConfirmId = null; window.render();
+        };
+
+        // --- HIZLI ALT KATEGORİ EKLEME (SORU EKRANI İÇİN) ---
+        window.quickAddCategory = async () => {
+            const selectEls = document.querySelectorAll('select[name="lessonId"]');
+            let parentId = null;
+            if(selectEls.length > 0 && selectEls[0].value) {
+                parentId = selectEls[0].value;
+            }
+            
+            let parentName = "Ana Dizin (En Üst)";
+            if(parentId) {
+                const pCat = lessons.find(c => c.id === parentId);
+                if(pCat) parentName = pCat.name;
+            }
+
+            const name = prompt(`'${parentName}' içerisine eklenecek yeni alt klasör / deneme adını girin:\n(Örn: Deneme-1)`);
+            if (!name || !name.trim()) return;
+
+            const id = 'c' + Date.now();
+            const newCat = { id, name: name.trim(), parentId: parentId || null };
+            
+            // Veritabanına kaydet
+            await setDoc(doc(db, basePath, 'lessons', id), newCat);
+            
+            // Formu silmemek için sadece dropdown'ları anlık güncelliyoruz
+            lessons.push(newCat); 
+            const newHTML = '<option value="">Konu Klasörünü Seçin...</option>' + getFlatCategoriesHTML(null, '');
+            selectEls.forEach(s => {
+                s.innerHTML = newHTML;
+                s.value = id; // Yeni oluşturulanı otomatik seç
+            });
+        };
+
+        // --- SEÇİLİ KATEGORİYİ VEYA TÜM SORULARI SİLME ---
+        window.setQuestionFilter = (val) => {
+            state.questionFilterId = val;
+            window.render();
+        };
+        
+        window.promptBulkDelete = () => { 
+            state.bulkDeleteConfirm = true; 
+            window.render(); 
+        };
+        window.cancelBulkDelete = () => { 
+            state.bulkDeleteConfirm = false; 
+            window.render(); 
+        };
+        
+        window.confirmBulkDelete = async () => {
+            state.bulkDeleteConfirm = false;
+            window.render();
+            
+            // Eğer bir kategori filtrelendiyse SADECE o kategoridekileri seç
+            let qsToDelete = questions;
+            if (state.questionFilterId) {
+                qsToDelete = questions.filter(q => q.lessonId === state.questionFilterId);
+            }
+            
+            const batchPromises = qsToDelete.map(q => deleteDoc(doc(db, basePath, 'questions', q.id.toString())));
+            await Promise.all(batchPromises);
+        };
+
+        window.addQuestion = async (e) => {
+            e.preventDefault();
+            const f = e.target;
+            const qId = Date.now().toString();
+            const newQ = {
+                id: qId, lessonId: f.lessonId.value, question: f.qText.value,
+                options: [f.o0.value, f.o1.value, f.o2.value, f.o3.value],
+                correct: parseInt(f.correct.value), explanation: f.expl.value
+            };
+            await setDoc(doc(db, basePath, 'questions', qId), newQ);
+            f.reset(); 
+        };
+
+        window.handleBulkAdd = async (e) => {
+            e.preventDefault();
+            const lessonId = e.target.lessonId.value;
+            const text = e.target.bulkText.value;
+            
+            let blocks = [];
+            if (text.includes('---')) {
+                blocks = text.split('---').map(b => b.trim()).filter(b => b.length > 0);
+            } else {
+                let rawBlocks = text.split(/(?=(?:^|\n)\s*(?:SORU|Soru\s*\d*\s*[:\.]|Soru:|\d+[\.\)])\s*)/i);
+                for (let i = 0; i < rawBlocks.length; i++) {
+                    let b = rawBlocks[i].trim();
+                    if (b.length === 0) continue;
+                    let hasOptions = /(?:^|\n)\s*[A-D][\.\)]/i.test(b) || /(?:^|\n)\s*CEVAP/i.test(b);
+                    if (blocks.length > 0 && !hasOptions) blocks[blocks.length - 1] += "\n\n" + b;
+                    else blocks.push(b);
+                }
+            }
+
+            let addedCount = 0; let errors = []; let batchPromises = [];
+
+            blocks.forEach((block, index) => {
+                try {
+                    const lines = block.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                    let qLineIndex = lines.findIndex(l => /^(?:SORU|\d+[\.\)])/i.test(l));
+                    if (qLineIndex === -1) qLineIndex = 0;
+                    
+                    const aLineIndex = lines.findIndex(l => /^A[\)\.\s]/i.test(l));
+                    const bLineIndex = lines.findIndex(l => /^B[\)\.\s]/i.test(l));
+                    const cLineIndex = lines.findIndex(l => /^C[\)\.\s]/i.test(l));
+                    const dLineIndex = lines.findIndex(l => /^D[\)\.\s]/i.test(l));
+                    const ansLineIndex = lines.findIndex(l => /^CEVAP/i.test(l));
+                    const expLineIndex = lines.findIndex(l => /^AÇIKLAMA/i.test(l));
+
+                    if (aLineIndex === -1 || bLineIndex === -1 || cLineIndex === -1 || dLineIndex === -1) throw new Error("A, B, C, D şıklarının hepsi ayrı satırlarda bulunamadı.");
+                    if (ansLineIndex === -1) throw new Error("Cevap satırı bulunamadı.");
+
+                    let questionText = lines.slice(qLineIndex, aLineIndex).join('\n').replace(/^(?:SORU.*?:?|\d+[\.\)])/i, '').trim();
+                    if(questionText.startsWith(':')) questionText = questionText.substring(1).trim();
+
+                    const options = [
+                        lines.slice(aLineIndex, bLineIndex).join(' ').replace(/^A[\)\.\s:]+/i, '').trim(),
+                        lines.slice(bLineIndex, cLineIndex).join(' ').replace(/^B[\)\.\s:]+/i, '').trim(),
+                        lines.slice(cLineIndex, dLineIndex).join(' ').replace(/^C[\)\.\s:]+/i, '').trim(),
+                        lines.slice(dLineIndex, Math.min(...[ansLineIndex, expLineIndex].filter(i => i !== -1))).join(' ').replace(/^D[\)\.\s:]+/i, '').trim()
+                    ];
+                    
+                    const ansLine = lines[ansLineIndex];
+                    const ansCharMatch = ansLine.match(/Cevap[\s:]*([A-D])/i);
+                    if (!ansCharMatch) throw new Error("Geçerli cevap harfi bulunamadı.");
+                    const correct = {'A': 0, 'B': 1, 'C': 2, 'D': 3}[ansCharMatch[1].toUpperCase()];
+
+                    let explanation = "Bu soru için açıklama bulunmuyor.";
+                    if (expLineIndex !== -1) {
+                        const expEndIndex = (ansLineIndex > expLineIndex) ? ansLineIndex : lines.length;
+                        explanation = lines.slice(expLineIndex, expEndIndex).join('\n').replace(/^.*?AÇIKLAMA[\s:]*/i, '').trim();
+                    } else if (ansLineIndex !== -1 && ansLineIndex < lines.length - 1) {
+                        explanation = lines.slice(ansLineIndex + 1).join('\n').trim();
+                    } else if (ansLineIndex !== -1) {
+                        const inlineMatch = ansLine.match(/Cevap[\s:]*[A-D][\s\.\-:]*(.*)/i);
+                        if (inlineMatch && inlineMatch[1].trim()) explanation = inlineMatch[1].replace(/^AÇIKLAMA[\s:]*/i, '').trim();
+                    }
+
+                    const qId = (Date.now() + index + Math.floor(Math.random() * 1000)).toString();
+                    batchPromises.push(setDoc(doc(db, basePath, 'questions', qId), { id: qId, lessonId, question: questionText, options, correct, explanation }));
+                    addedCount++;
+                } catch(err) { errors.push(`${index + 1}. Soru: ${err.message}`); }
+            });
+
+            if (addedCount > 0) {
+                await Promise.all(batchPromises);
+                e.target.reset();
+                state.bulkMessage = { type: 'success', text: `${addedCount} soru başarıyla Buluta aktarıldı!` + (errors.length > 0 ? `\n\n⚠️ Fakat ${errors.length} soruda hata çıktı:\n` + errors.join('\n') : '') };
+            } else {
+                state.bulkMessage = { type: 'error', text: `Hiç soru eklenemedi. Formatı kontrol edin.\n\nHatalar:\n${errors.join('\n')}` };
+            }
+            window.render();
+            setTimeout(() => { state.bulkMessage = { type: '', text: '' }; window.render(); }, 8000);
+        };
+
+        window.deleteQuestion = async (id) => await deleteDoc(doc(db, basePath, 'questions', id.toString()));
+
+        // --- YARDIMCI HTML ÜRETİCİLER ---
+        // Artık seçili filtreyi tutabilmek için 'selectedId' parametresi alıyor
+        const getFlatCategoriesHTML = (parentId = null, path = '', selectedId = '') => {
+            let html = '';
+            lessons.filter(c => c.parentId === parentId).forEach(c => {
+                const currentPath = path ? `${path} ➔ ${c.name}` : c.name;
+                const isSelected = c.id === selectedId ? 'selected' : '';
+                html += `<option value="${c.id}" ${isSelected}>${currentPath}</option>`;
+                html += getFlatCategoriesHTML(c.id, currentPath, selectedId);
+            });
+            return html;
+        };
+
+        const getAdminTreeHTML = (parentId = null, depth = 0) => {
+            const children = lessons.filter(c => c.parentId === parentId);
+            if (children.length === 0) return '';
+            
+            let html = `<div class="${depth > 0 ? 'ml-6 pl-4 border-l-2 border-indigo-50 mt-3 space-y-3 dark:border-slate-700' : 'space-y-4'}">`;
+            children.forEach(c => {
+                const qCount = questions.filter(q => q.lessonId === c.id).length;
+                html += `
+                <div class="bg-white rounded-2xl border ${depth === 0 ? 'border-slate-200 shadow-sm' : 'border-slate-100'} overflow-hidden dark:bg-slate-800 dark:border-slate-700">
+                    <div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
+                        <div class="flex items-center gap-3">
+                            ${depth === 0 
+                                ? `<div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 rounded-xl flex items-center justify-center"><i data-lucide="folder" class="w-5 h-5"></i></div>` 
+                                : `<i data-lucide="corner-down-right" class="w-5 h-5 text-slate-300 dark:text-slate-500"></i>`
+                            }
+                            <span class="font-bold ${depth === 0 ? 'text-lg text-slate-800 dark:text-slate-100' : 'text-md text-slate-600 dark:text-slate-300'} whitespace-pre-line">${c.name}</span>
+                            <span class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                ${qCount} Soru
+                            </span>
+                        </div>
+                        <button onclick="window.promptDeleteLesson('${c.id}')" class="text-slate-300 hover:text-rose-500 p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-colors" title="Sil">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    ${getAdminTreeHTML(c.id, depth + 1)}
+                </div>`;
+            });
+            html += `</div>`;
+            return html;
+        };
+
+        // --- RENDER (ARAYÜZ ÇİZİMİ) ---
+        window.render = () => {
+            let content = '';
+
+            if (state.step === 'welcome') {
+                const currentParentId = state.viewingCategoryPath.length > 0 ? state.viewingCategoryPath[state.viewingCategoryPath.length - 1] : null;
+                const displayedCategories = lessons.filter(c => c.parentId === currentParentId);
+                const questionsInCurrentCategory = currentParentId ? questions.filter(q => q.lessonId === currentParentId) : [];
+
+                let breadcrumbs = `<button onclick="window.navigateToPathIndex(-1)" class="flex items-center gap-1 transition-colors ${state.viewingCategoryPath.length === 0 ? 'text-indigo-600' : 'hover:text-indigo-600'}"><i data-lucide="folder" class="w-4 h-4"></i> Katalog</button>`;
+                state.viewingCategoryPath.forEach((catId, index) => {
+                    const cat = lessons.find(c => c.id === catId);
+                    if (!cat) return;
+                    const isLast = index === state.viewingCategoryPath.length - 1;
+                    breadcrumbs += `
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 dark:text-slate-600"></i>
+                        <button onclick="window.navigateToPathIndex(${index})" class="transition-colors whitespace-pre-line text-left ${isLast ? 'text-indigo-600' : 'hover:text-indigo-600'}">
+                            ${cat.name}
+                        </button>
+                    `;
+                });
+
+                content = `
+                <div class="flex-1 flex flex-col items-center justify-center p-4 md:p-12 text-center animate-reveal relative z-10 w-full">
+                    <button onclick="window.state.authError=''; window.state.authSuccess=''; window.navigate(window.state.currentUser ? 'admin' : 'admin_auth');" class="absolute top-6 right-6 p-4 bg-white dark:bg-slate-800 shadow-sm rounded-full text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:shadow-md transition-all border border-slate-100 dark:border-slate-700" title="Yönetim Paneli">
+                        <i data-lucide="settings" class="w-6 h-6"></i>
+                    </button>
+
+                    <div class="max-w-4xl w-full">
+                        <div class="mb-12">
+                            <div class="w-24 h-24 bg-indigo-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-xl shadow-indigo-200 rotate-6">
+                                <i data-lucide="graduation-cap" class="w-12 h-12 text-white"></i>
+                            </div>
+                            <h1 class="text-5xl md:text-6xl font-black text-slate-800 dark:text-white mb-4 tracking-tighter">Soru Çöz <span class="text-indigo-600">Pro</span></h1>
+                            <p class="text-xl text-slate-500 font-medium">Öğrenme yolculuğuna başla.</p>
+                        </div>
+
+                        <!-- Breadcrumbs -->
+                        <div class="flex items-center gap-2 mb-8 text-sm font-bold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap pb-2 custom-scrollbar bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+                            ${breadcrumbs}
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-reveal">
+                            ${questionsInCurrentCategory.length > 0 ? `
+                               <button onclick="window.navigate('quiz', '${currentParentId}')" class="btn-press bg-indigo-600 p-8 rounded-3xl shadow-xl shadow-indigo-200 text-left hover:-translate-y-1 transition-all group flex flex-col justify-between">
+                                 <div>
+                                   <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-white mb-6">
+                                     <i data-lucide="brain-circuit" class="w-7 h-7"></i>
+                                   </div>
+                                   <h3 class="text-2xl font-bold text-white mb-2">Bu Konunun Testini Çöz</h3>
+                                 </div>
+                                 <p class="text-indigo-200 font-bold text-xs uppercase tracking-widest mt-4">
+                                   ${questionsInCurrentCategory.length} Soru Bulunuyor
+                                 </p>
+                               </button>
+                            ` : ''}
+
+                            ${displayedCategories.map(cat => {
+                                const hasSub = lessons.some(c => c.parentId === cat.id);
+                                return `
+                                <button onclick="window.handleLessonClick('${cat.id}')" class="btn-press glass-card bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 text-left hover:shadow-xl hover:-translate-y-1 transition-all group">
+                                  <div class="w-14 h-14 ${hasSub ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-500' : 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600'} rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                    <i data-lucide="${hasSub ? 'layers' : 'book-open'}" class="w-7 h-7"></i>
+                                  </div>
+                                  <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-2 whitespace-pre-line">${cat.name}</h3>
+                                  <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">
+                                     Gir ve Keşfet
+                                  </p>
+                                </button>`;
+                            }).join('')}
+
+                            ${displayedCategories.length === 0 && questionsInCurrentCategory.length === 0 ? `
+                              <div class="col-span-2 text-center p-12 bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 text-slate-400 font-medium">
+                                Bu dizin tamamen boş. İçerik eklemek için Yönetim panelini kullanın.
+                              </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            else if (state.step === 'admin_auth') {
+                content = `
+                <div class="flex-1 flex items-center justify-center p-6 animate-reveal">
+                    <div class="max-w-md w-full bg-white dark:bg-slate-800 rounded-[3.5rem] p-12 relative overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-700">
+                        <div class="flex justify-center mb-8 relative z-10">
+                            <div class="w-20 h-20 bg-indigo-50 dark:bg-indigo-900/30 rounded-[2rem] flex items-center justify-center text-indigo-600 shadow-sm rotate-3">
+                                <i data-lucide="${state.authTab === 'login' ? 'lock' : state.authTab === 'register' ? 'user-plus' : 'key'}" class="w-10 h-10"></i>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 mb-6 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-[2rem] relative z-10">
+                            <button onclick="window.state.authTab='login'; window.state.authError=''; window.state.authSuccess=''; window.render()" class="flex-1 py-3 rounded-[1.5rem] font-bold transition-all text-sm ${state.authTab==='login'?'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm':'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}">GİRİŞ YAP</button>
+                            <button onclick="window.state.authTab='register'; window.state.authError=''; window.state.authSuccess=''; window.render()" class="flex-1 py-3 rounded-[1.5rem] font-bold transition-all text-sm ${state.authTab==='register'?'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm':'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}">KAYIT OL</button>
+                        </div>
+
+                        ${state.authSuccess ? `<div class="p-4 bg-emerald-50 text-emerald-600 rounded-2xl text-sm font-bold text-center mb-6 border border-emerald-100 animate-reveal">${state.authSuccess}</div>` : ''}
+
+                        <form onsubmit="window.handleAuth(event)" class="space-y-4 relative z-10">
+                            <div class="relative">
+                                <i data-lucide="mail" class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                                <input type="email" name="email" placeholder="E-posta Adresi" class="w-full p-4 pl-14 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-100 font-semibold text-slate-700 dark:text-slate-200" required>
+                            </div>
+                            
+                            ${state.authTab === 'login' || state.authTab === 'register' ? `
+                            <div class="relative animate-reveal">
+                                <i data-lucide="key" class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                                <input type="password" name="password" placeholder="Şifre" class="w-full p-4 pl-14 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-100 font-semibold text-slate-700 dark:text-slate-200" required>
+                            </div>
+                            ` : ''}
+
+                            ${state.authTab === 'forgot' ? `
+                            <div class="relative animate-reveal">
+                                <i data-lucide="key" class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400"></i>
+                                <input type="password" name="newPassword" placeholder="Yeni Şifre" class="w-full p-4 pl-14 bg-indigo-50/30 dark:bg-indigo-900/20 border-indigo-100 dark:border-indigo-800 rounded-2xl border outline-none focus:ring-2 focus:ring-indigo-200 font-semibold text-slate-700 dark:text-slate-200" required>
+                            </div>
+                            <div class="relative animate-reveal">
+                                <i data-lucide="ticket" class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400"></i>
+                                <input type="text" name="inviteCode" placeholder="Kişisel Davetiye Kodunuz" class="w-full p-4 pl-14 bg-indigo-50/30 dark:bg-indigo-900/20 border-indigo-100 dark:border-indigo-800 rounded-2xl border outline-none focus:ring-2 focus:ring-indigo-200 font-semibold text-slate-700 dark:text-slate-200 uppercase" required>
+                            </div>
+                            ` : ''}
+                            
+                            ${state.authTab === 'register' ? `
+                            <div class="relative animate-reveal">
+                                <i data-lucide="ticket" class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400"></i>
+                                <input type="text" name="inviteCode" placeholder="Tek Kullanımlık Davetiye Kodu" class="w-full p-4 pl-14 bg-indigo-50/30 dark:bg-indigo-900/20 border-indigo-100 dark:border-indigo-800 rounded-2xl border outline-none focus:ring-2 focus:ring-indigo-200 font-semibold text-slate-700 dark:text-slate-200 uppercase" required>
+                            </div>
+                            ` : ''}
+                            
+                            ${state.authError ? `<div class="p-4 bg-rose-50 text-rose-600 rounded-2xl text-sm font-bold text-center border border-rose-100">${state.authError}</div>` : ''}
+                            
+                            <button type="submit" class="btn-press w-full bg-indigo-600 text-white font-black py-4 rounded-[2rem] shadow-xl hover:bg-indigo-700 transition-all text-lg mt-2">
+                                ${state.authTab === 'login' ? 'GİRİŞ YAP' : state.authTab === 'register' ? 'KAYDI TAMAMLA' : 'ŞİFREYİ SIFIRLA'}
+                            </button>
+
+                            ${state.authTab === 'login' ? `
+                            <div class="text-right mt-2">
+                                <button type="button" onclick="window.state.authTab='forgot'; window.state.authError=''; window.state.authSuccess=''; window.render()" class="text-indigo-500 hover:text-indigo-700 text-sm font-bold transition-colors">Şifremi Unuttum?</button>
+                            </div>
+                            ` : ''}
+                            ${state.authTab === 'forgot' ? `
+                            <div class="text-center mt-2 animate-reveal">
+                                <button type="button" onclick="window.state.authTab='login'; window.state.authError=''; window.state.authSuccess=''; window.render()" class="text-slate-400 hover:text-slate-600 text-sm font-bold transition-colors">İptal, Giriş Ekranına Dön</button>
+                            </div>
+                            ` : ''}
+                        </form>
+                        
+                        <div class="mt-8 text-center relative z-10 border-t border-slate-100 dark:border-slate-700 pt-6">
+                            <button onclick="window.navigate('welcome')" class="text-slate-400 hover:text-slate-600 font-bold transition-colors">Ana Menüye Dön</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            else if (state.step === 'quiz') {
+                const lessonQs = questions.filter(q => q.lessonId === state.activeCategoryId);
+                const q = lessonQs[state.currentIdx];
+                const prog = ((state.currentIdx + 1) / lessonQs.length) * 100;
+                const activeCategoryName = lessons.find(c => c.id === state.activeCategoryId)?.name;
+                
+                content = `
+                <div class="max-w-4xl w-full mx-auto p-4 md:p-12 animate-reveal relative z-10">
+                    <div class="flex items-center justify-between mb-10 px-2">
+                        <div>
+                            <span class="text-indigo-600 font-black text-[10px] uppercase tracking-[0.4em] mb-1 block whitespace-pre-line">${activeCategoryName}</span>
+                            <h4 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Soru ${state.currentIdx + 1}<span class="text-slate-300 dark:text-slate-600 ml-2">/ ${lessonQs.length}</span></h4>
+                        </div>
+                        <div class="px-6 py-3 bg-white dark:bg-slate-800 rounded-2xl font-black flex items-center gap-3 shadow-sm border border-slate-100 dark:border-slate-700">
+                            <i data-lucide="timer" class="w-5 h-5 text-amber-500"></i>
+                            <span id="timer-val" class="text-2xl font-mono text-slate-700 dark:text-slate-200">${state.timeLeft}s</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-[3rem] shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden relative">
+                        <div class="h-1.5 w-full bg-slate-50 dark:bg-slate-700"><div class="h-full bg-indigo-500 transition-all duration-700 ease-out" style="width: ${prog}%"></div></div>
+                        
+                        <div class="p-8 md:p-12">
+                            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-10 leading-snug">${q.question}</h2>
+                            <div class="space-y-4">
+                                ${q.options.map((opt, i) => {
+                                    let cls = "border-slate-100 dark:border-slate-600 hover:border-indigo-300 hover:bg-slate-50 dark:hover:bg-slate-700";
+                                    let icon = "";
+                                    let textCls = "text-slate-700 dark:text-slate-200";
+
+                                    if (state.isConfirmed) {
+                                        if (i === q.correct) { 
+                                            cls = "correct-pop"; 
+                                            icon = '<i data-lucide="check-circle-2" class="w-7 h-7 text-emerald-500 animate-bounce"></i>'; 
+                                            textCls = "text-emerald-700 dark:text-emerald-400";
+                                        } else if (state.selectedIdx === i) { 
+                                            cls = "wrong-shake"; 
+                                            textCls = "text-rose-600 dark:text-rose-400";
+                                            icon = '<i data-lucide="x-circle" class="w-7 h-7 text-rose-500"></i>'; 
+                                        } else { 
+                                            cls = "opacity-30 border-slate-100 grayscale pointer-events-none"; 
+                                        }
+                                    }
+                                    return `<button onclick="window.handleAnswer(${i}, event)" class="w-full text-left p-6 rounded-[2rem] border-2 transition-all flex items-center justify-between font-bold text-lg group ${cls}">
+                                        <span class="${textCls}">${opt}</span> ${icon}
+                                    </button>`;
+                                }).join('')}
+                            </div>
+
+                            ${state.isConfirmed ? `
+                                <div class="mt-10 p-8 bg-indigo-50/50 dark:bg-indigo-900/30 rounded-[2rem] border border-indigo-100 dark:border-indigo-800 animate-reveal">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <i data-lucide="info" class="w-5 h-5 text-indigo-500"></i>
+                                        <span class="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Çözüm Detayı</span>
+                                    </div>
+                                    <p class="text-slate-700 dark:text-slate-300 text-lg leading-relaxed font-medium">"${q.explanation}"</p>
+                                </div>` : ''}
+                        </div>
+
+                        <div class="p-8 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end transition-all duration-300 ${state.isConfirmed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}">
+                            <button onclick="window.nextQ()" class="btn-press bg-slate-900 dark:bg-black text-white px-12 py-5 rounded-[2rem] font-black shadow-xl flex items-center gap-3 transition-all text-xl hover:bg-black">
+                                ${state.currentIdx < lessonQs.length - 1 ? 'Sıradaki Soru' : 'Sonuçları İncele'} <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 text-center relative z-10 animate-reveal">
+                        <button onclick="window.endQuizEarly()" class="text-slate-400 hover:text-rose-500 font-bold transition-colors flex items-center justify-center gap-2 mx-auto">
+                            <i data-lucide="x-circle" class="w-5 h-5"></i> Testi Erken Bitir ve Sonuçları Gör
+                        </button>
+                    </div>
+                </div>`;
+            }
+
+            else if (state.step === 'results') {
+                const lessonQs = questions.filter(q => q.lessonId === state.activeCategoryId);
+                const perc = Math.round((state.score / lessonQs.length) * 100) || 0;
+                const isSuccess = perc >= 80;
+                const activeCategoryName = lessons.find(c => c.id === state.activeCategoryId)?.name;
+                
+                content = `
+                <div class="flex-1 flex items-center justify-center p-6 animate-reveal relative z-10">
+                    <div class="max-w-xl w-full bg-white dark:bg-slate-800 rounded-[3.5rem] shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-700 relative">
+                        <div class="p-16 text-center text-white relative transition-colors duration-500 ${isSuccess ? 'bg-emerald-500' : 'bg-rose-500'}">
+                            <div class="w-28 h-28 bg-white/10 backdrop-blur-md rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-xl border border-white/20 text-6xl">
+                                ${isSuccess ? '😊' : '😔'}
+                            </div>
+                            <span class="text-white/80 text-sm font-bold uppercase tracking-[0.3em] block mb-4 whitespace-pre-line">${activeCategoryName}</span>
+                            <h2 class="text-5xl font-black tracking-tight mb-4">
+                                ${isSuccess ? 'TEBRİKLER!' : 'ÜZGÜNÜM'}
+                            </h2>
+                            <p class="text-xl font-bold opacity-90">
+                                ${isSuccess ? 'Bir üst seviyeye geçebilirsiniz.' : 'Bu seviyenin konularını Tekrar çalışın!'}
+                            </p>
+                        </div>
+                        <div class="p-12 space-y-12 text-center">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="bg-slate-50 dark:bg-slate-900/50 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700">
+                                    <p class="text-6xl font-black mb-2 ${isSuccess ? 'text-emerald-500' : 'text-rose-500'}">${state.score}<span class="text-3xl text-slate-300">/${lessonQs.length}</span></p>
+                                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Doğru</p>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-900/50 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700">
+                                    <p class="text-6xl font-black mb-2 ${isSuccess ? 'text-emerald-500' : 'text-rose-500'}">%${perc}</p>
+                                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Başarı</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-5">
+                                <button onclick="window.navigate('quiz', '${state.activeCategoryId}')" class="btn-press flex-[2.5] text-white font-black py-6 rounded-[2rem] shadow-xl flex items-center justify-center gap-3 text-lg transition-colors ${isSuccess ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-100' : 'bg-rose-500 hover:bg-rose-600 shadow-rose-100'}">
+                                    <i data-lucide="rotate-ccw" class="w-6 h-6"></i> TEKRAR ÇÖZ
+                                </button>
+                                <button onclick="window.state.viewingCategoryPath=[]; window.navigate('welcome')" class="btn-press flex-1 bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-200 font-bold py-5 rounded-[2rem] hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors text-lg border border-slate-100 dark:border-slate-600">
+                                    Menü
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            else if (state.step === 'admin') {
+                content = `
+                <div class="max-w-6xl mx-auto w-full p-4 md:p-8 animate-reveal relative z-10">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
+                        <div>
+                            <button onclick="window.navigate('welcome')" class="flex items-center gap-2 text-slate-500 font-bold hover:text-indigo-600 transition-colors mb-2">
+                                <i data-lucide="arrow-left" class="w-5 h-5"></i> Katalog Ekranına Dön
+                            </button>
+                            <h1 class="text-3xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">İçerik Stüdyosu</h1>
+                            <p class="text-slate-400 text-xs font-bold uppercase mt-2 tracking-widest flex items-center gap-2">
+                                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_#10b981]"></span> 
+                                Aktif Kullanıcı: ${state.currentUser?.email}
+                            </p>
+                        </div>
+                        <div class="flex flex-col items-end gap-4">
+                            <button onclick="window.logout()" class="bg-white dark:bg-slate-800 text-rose-500 px-6 py-3 rounded-[1.5rem] font-bold flex items-center gap-2 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
+                                <i data-lucide="log-out" class="w-4 h-4"></i> Çıkış
+                            </button>
+                            <div class="flex bg-white dark:bg-slate-800 p-1.5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-x-auto max-w-[90vw] custom-scrollbar">
+                                <button onclick="window.state.adminTab='lessons';window.render()" class="whitespace-nowrap px-6 py-2.5 rounded-xl font-bold transition-all text-sm ${state.adminTab==='lessons'?'bg-indigo-600 text-white shadow-md':'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700'}">Kategori Yönetimi</button>
+                                <button onclick="window.state.adminTab='questions';window.render()" class="whitespace-nowrap px-6 py-2.5 rounded-xl font-bold transition-all text-sm ${state.adminTab==='questions'?'bg-indigo-600 text-white shadow-md':'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700'}">Soru Yönetimi</button>
+                                ${state.currentUser?.email === SUPER_ADMIN_EMAIL ? `
+                                <button onclick="window.state.adminTab='invites';window.render()" class="whitespace-nowrap px-6 py-2.5 rounded-xl font-bold transition-all text-sm ${state.adminTab==='invites'?'bg-indigo-600 text-white shadow-md':'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700'}">Davetiyeler</button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    ${state.adminTab === 'lessons' ? `
+                        <div class="grid lg:grid-cols-3 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm p-8 border border-slate-100 dark:border-slate-700">
+                                    <h3 class="text-lg font-black text-slate-800 dark:text-white mb-6 flex items-center gap-2"><i data-lucide="folder" class="text-indigo-500"></i> Kategori / Konu Ekle</h3>
+                                    <form onsubmit="window.addLesson(event)" class="space-y-4">
+                                        <div>
+                                            <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Üst Kategori (Opsiyonel)</label>
+                                            <select name="parentId" class="w-full p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-100 font-semibold text-slate-600 dark:text-slate-200">
+                                                <option value="">-- Bağımsız Ana Kategori Yap --</option>
+                                                ${getFlatCategoriesHTML(null, '')}
+                                            </select>
+                                            <p class="text-[10px] font-bold text-slate-400 mt-2 px-1">Bir klasörün içine alt klasör açmak için onu seçin.</p>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Yeni Klasör / Konu Adı</label>
+                                            <textarea name="lessonName" placeholder="Örn: 6. Sınıf&#10;Geometri" class="w-full p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-100 font-semibold custom-scrollbar resize-none dark:text-slate-100" rows="2" required></textarea>
+                                        </div>
+                                        <button class="btn-press w-full bg-slate-900 dark:bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-black transition-colors mt-2 shadow-lg">Klasörü Oluştur</button>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <div class="lg:col-span-2">
+                                <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+                                    <div class="p-6 bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                                        <h3 class="text-lg font-black text-slate-800 dark:text-white">Ders Ağacı</h3>
+                                        <span class="text-xs font-bold text-slate-400 bg-white dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">Sınırsız Klasörleme Aktif</span>
+                                    </div>
+                                    <div class="p-6 max-h-[800px] overflow-y-auto custom-scrollbar">
+                                        ${getAdminTreeHTML(null, 0)}
+                                        ${lessons.length === 0 ? `<p class="text-center text-slate-400 py-8">Henüz hiçbir kategori eklenmedi.</p>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ` : state.adminTab === 'questions' ? `
+                        <div class="grid lg:grid-cols-3 gap-8">
+                            <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm p-8 border border-slate-100 dark:border-slate-700 h-fit relative">
+                                
+                                <div class="flex gap-2 mb-8 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-2xl">
+                                    <button onclick="window.state.adminAddMode='single'; window.state.bulkMessage={type:'',text:''}; window.render()" class="flex-1 py-3 rounded-xl font-bold transition-all text-sm ${state.adminAddMode==='single'?'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm':'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}">Tekil Ekle</button>
+                                    <button onclick="window.state.adminAddMode='bulk'; window.state.bulkMessage={type:'',text:''}; window.render()" class="flex-1 py-3 rounded-xl font-bold transition-all text-sm ${state.adminAddMode==='bulk'?'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm':'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}">Toplu Yapıştır</button>
+                                </div>
+
+                                ${state.bulkMessage.text ? `<div class="mb-6 p-4 rounded-2xl text-sm font-bold whitespace-pre-line ${state.bulkMessage.type === 'success' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100'}">${state.bulkMessage.text}</div>` : ''}
+
+                                ${state.adminAddMode === 'single' ? `
+                                <form onsubmit="window.addQuestion(event)" class="space-y-5 animate-reveal">
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Sorunun Ekleneceği Konu</label>
+                                        <div class="flex gap-2">
+                                            <select name="lessonId" class="flex-1 w-full p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-100 font-semibold text-slate-700 dark:text-slate-200 text-sm" required>
+                                                <option value="">Konu Klasörünü Seçin...</option>
+                                                ${getFlatCategoriesHTML(null, '', state.adminAddMode === 'single' ? '' : '')}
+                                            </select>
+                                            <button type="button" onclick="window.quickAddCategory()" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-4 rounded-2xl border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center" title="Seçili konunun içine yeni alt klasör/deneme aç">
+                                                <i data-lucide="folder-plus" class="w-6 h-6"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Soru Metni</label>
+                                        <textarea name="qText" class="w-full p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm font-semibold custom-scrollbar dark:text-slate-200" rows="3" required></textarea>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <label class="text-xs font-bold text-slate-400 uppercase block">Şıklar (Doğruyu İşaretle)</label>
+                                        ${[0,1,2,3].map(i => `
+                                            <div class="relative group">
+                                                <input name="o${i}" placeholder="${String.fromCharCode(65+i)} Şıkkı" class="w-full p-4 pr-12 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 text-sm font-semibold focus:ring-2 focus:ring-indigo-100 outline-none dark:text-slate-200" required>
+                                                <input type="radio" name="correct" value="${i}" ${i===0?'checked':''} class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 accent-indigo-600 cursor-pointer">
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Çözüm / Açıklama</label>
+                                        <input name="expl" class="w-full p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 text-sm font-semibold focus:ring-2 focus:ring-indigo-100 outline-none dark:text-slate-200" required>
+                                    </div>
+                                    <button class="btn-press w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-xl hover:bg-indigo-700 transition-all flex items-center justify-center gap-2">
+                                        <i data-lucide="plus" class="w-5 h-5"></i> Soruyu Yayınla
+                                    </button>
+                                </form>
+                                ` : `
+                                <form onsubmit="window.handleBulkAdd(event)" class="space-y-5 animate-reveal">
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Soruların Ekleneceği Konu</label>
+                                        <div class="flex gap-2">
+                                            <select name="lessonId" class="flex-1 w-full p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-100 font-semibold text-slate-700 dark:text-slate-200 text-sm" required>
+                                                <option value="">Konu Klasörünü Seçin...</option>
+                                                ${getFlatCategoriesHTML(null, '')}
+                                            </select>
+                                            <button type="button" onclick="window.quickAddCategory()" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-4 rounded-2xl border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors flex items-center justify-center" title="Seçili konunun içine yeni alt klasör/deneme aç">
+                                                <i data-lucide="folder-plus" class="w-6 h-6"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="bg-indigo-50/50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 p-4 rounded-2xl">
+                                        <p class="text-[11px] font-black text-indigo-800 dark:text-indigo-300 uppercase tracking-widest mb-3 flex items-center gap-1"><i data-lucide="info" class="w-4 h-4"></i> Format Rehberi</p>
+                                        <div class="text-xs text-slate-600 dark:text-slate-400 font-mono bg-white dark:bg-slate-800 p-3 rounded-xl border border-indigo-50 dark:border-slate-700 leading-relaxed">
+                                            Soru: Hangi açı bir dar açıdır?<br/>A) 120<br/>B) 90<br/>C) 45<br/>D) 180<br/>Cevap: C<br/>Açıklama: 90 dereceden küçük açılara dar açı denir.<br/>---
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Soruları Yapıştırın</label>
+                                        <textarea name="bulkText" placeholder="Soruları buraya yapıştırın..." class="w-full p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm font-mono leading-relaxed custom-scrollbar dark:text-slate-200" rows="10" required></textarea>
+                                    </div>
+                                    <button class="btn-press w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-xl hover:bg-indigo-700 transition-all flex items-center justify-center gap-2">
+                                        <i data-lucide="sparkles" class="w-5 h-5"></i> Ayrıştır ve Ekle
+                                    </button>
+                                </form>
+                                `}
+                            </div>
+                            
+                            <div class="lg:col-span-2">
+                                ${(() => {
+                                    // Filtrelenen soruları hesapla
+                                    const filteredQuestions = state.questionFilterId 
+                                        ? questions.filter(q => q.lessonId === state.questionFilterId)
+                                        : questions;
+                                    
+                                    return `
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 mt-8 lg:mt-0 px-2 gap-4">
+                                        <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Soru Havuzu (${filteredQuestions.length})</h3>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <select onchange="window.setQuestionFilter(this.value)" class="text-xs p-2.5 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-indigo-100 font-semibold text-slate-700 dark:text-slate-200 w-full sm:w-auto min-w-[200px]">
+                                                <option value="">-- Tüm Soruları Göster --</option>
+                                                ${getFlatCategoriesHTML(null, '', state.questionFilterId)}
+                                            </select>
+                                            
+                                            ${filteredQuestions.length > 0 ? `
+                                            <button onclick="window.promptBulkDelete()" class="btn-press text-xs bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 px-4 py-2.5 rounded-xl font-bold hover:bg-rose-200 dark:hover:bg-rose-900/50 transition-colors flex items-center justify-center gap-2 shadow-sm whitespace-nowrap w-full sm:w-auto">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i> 
+                                                ${state.questionFilterId ? 'Görünenleri Sil' : 'Tümünü Sil'}
+                                            </button>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="space-y-4 max-h-[750px] overflow-y-auto pr-2 custom-scrollbar">
+                                        ${filteredQuestions.map(q => {
+                                            const cat = lessons.find(c => c.id === q.lessonId);
+                                            const catText = cat ? cat.name.replace(/\n/g, ' ') : 'Belirsiz Kategori';
+                                            return `
+                                            <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 flex justify-between items-start group">
+                                                <div class="flex-1 pr-8">
+                                                    <span class="text-[10px] font-black text-indigo-400 dark:text-indigo-300 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full">${catText}</span>
+                                                    <p class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-4 leading-snug">${q.question}</p>
+                                                </div>
+                                                <button onclick="window.deleteQuestion('${q.id}')" class="text-slate-200 hover:text-rose-500 p-2 bg-slate-50 dark:bg-slate-900/50 rounded-xl transition-colors"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                                            </div>`;
+                                        }).join('')}
+                                        ${filteredQuestions.length === 0 ? `<div class="text-center py-20 text-slate-400 font-medium bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700">Bu kategoride henüz soru bulunmuyor.</div>` : ''}
+                                    </div>
+                                    `;
+                                })()}
+                            </div>
+                        </div>
+                    ` : (state.adminTab === 'invites' && state.currentUser?.email === SUPER_ADMIN_EMAIL) ? `
+                        <div class="grid lg:grid-cols-3 gap-8">
+                            <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm p-10 border border-slate-100 dark:border-slate-700 h-fit">
+                                <h3 class="text-xl font-black mb-6 flex items-center gap-3 text-indigo-600"><i data-lucide="ticket"></i> Yeni Kod</h3>
+                                <p class="text-slate-500 text-sm mb-8 font-medium leading-relaxed">Sisteme erişmesini istediğiniz kişiler için <b class="text-slate-700 dark:text-slate-300">tek kullanımlık</b> davetiye kodu oluşturun.</p>
+                                <button onclick="window.generateInviteCode()" class="btn-press w-full bg-indigo-600 text-white font-black py-4 rounded-[1.5rem] shadow-xl hover:bg-indigo-700 transition-all uppercase text-sm tracking-widest flex items-center justify-center gap-2">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i> KOD ÜRET
+                                </button>
+                            </div>
+                            
+                            <div class="lg:col-span-2 space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                                ${[...inviteCodes].reverse().map(inv => `
+                                    <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl flex items-center justify-between border border-slate-100 dark:border-slate-700 shadow-sm ${inv.used ? 'opacity-60 bg-slate-50 dark:bg-slate-900' : 'hover:shadow-md'} transition-all group">
+                                        <div class="flex items-center gap-6">
+                                            <div class="w-14 h-14 ${inv.used ? 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400' : 'bg-emerald-50 text-emerald-500 dark:bg-emerald-900/30'} rounded-2xl flex items-center justify-center transition-all">
+                                                <i data-lucide="${inv.used ? 'lock' : 'user-plus'}" class="w-6 h-6"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-black text-slate-900 dark:text-slate-100 text-2xl tracking-widest uppercase flex items-center gap-4">
+                                                    ${inv.code}
+                                                    ${!inv.used ? '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full tracking-widest">AKTİF</span>' : ''}
+                                                </p>
+                                                <p class="text-xs font-bold uppercase mt-1 tracking-widest ${inv.used ? 'text-slate-500' : 'text-emerald-500'}">
+                                                    ${inv.used ? 'Kullanıldı: ' + inv.usedBy : 'Kullanıma Hazır - Gönderilebilir'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <button onclick="window.deleteInviteCode('${inv.code}')" class="p-4 text-slate-300 hover:text-rose-500 transition-colors"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="p-10 text-center text-rose-500 font-bold glass-card rounded-[3rem] border border-slate-100 dark:border-slate-700">Bu sayfayı görüntüleme yetkiniz yok.</div>
+                    `}
+
+                    <!-- DELETE MODAL (Lessons) -->
+                    ${state.deleteConfirmId ? `
+                    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+                        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-[5rem] shadow-2xl p-20 text-center animate-reveal">
+                            <div class="w-24 h-24 bg-rose-50 dark:bg-rose-900/30 text-rose-500 rounded-[3rem] flex items-center justify-center mx-auto mb-10 shadow-inner">
+                                <i data-lucide="alert-triangle" class="w-12 h-12"></i>
+                            </div>
+                            <h3 class="text-4xl font-black text-slate-900 dark:text-slate-100 mb-6 tracking-tighter">Onaylıyor musunuz?</h3>
+                            <p class="text-slate-400 dark:text-slate-300 text-xl mb-16 leading-relaxed">Seçili öğe ve ona bağlı her şey Bulut üzerinden kalıcı olarak silinecek.</p>
+                            <div class="flex gap-6">
+                                <button onclick="window.cancelDelete()" class="flex-1 py-7 font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors text-xl">Vazgeç</button>
+                                <button onclick="window.confirmDeleteLesson()" class="btn-press flex-[2.5] bg-rose-500 text-white font-black py-7 rounded-[2.5rem] shadow-2xl hover:bg-rose-600 uppercase tracking-widest text-lg">Kalıcı Olarak Sil</button>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <!-- BULK DELETE QUESTIONS MODAL -->
+                    ${state.bulkDeleteConfirm ? `
+                    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+                        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-[5rem] shadow-2xl p-20 text-center animate-reveal">
+                            <div class="w-24 h-24 bg-rose-50 dark:bg-rose-900/30 text-rose-500 rounded-[3rem] flex items-center justify-center mx-auto mb-10 shadow-inner">
+                                <i data-lucide="alert-triangle" class="w-12 h-12"></i>
+                            </div>
+                            <h3 class="text-4xl font-black text-slate-900 dark:text-slate-100 mb-6 tracking-tighter">Emin misiniz?</h3>
+                            <p class="text-slate-400 dark:text-slate-300 text-xl mb-16 leading-relaxed">
+                                ${state.questionFilterId 
+                                    ? `Seçili kategorideki <b>${questions.filter(q => q.lessonId === state.questionFilterId).length} soru</b> kalıcı olarak silinecek.` 
+                                    : `Sistemdeki <b>TÜM SORULAR (${questions.length} adet)</b> kalıcı olarak silinecek.`}
+                                <br/>Bu işlem geri alınamaz!
+                            </p>
+                            <div class="flex gap-6">
+                                <button onclick="window.cancelBulkDelete()" class="flex-1 py-7 font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors text-xl">Vazgeç</button>
+                                <button onclick="window.confirmBulkDelete()" class="btn-press flex-[2.5] bg-rose-500 text-white font-black py-7 rounded-[2.5rem] shadow-2xl hover:bg-rose-600 uppercase tracking-widest text-lg">Sil</button>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>`;
+            }
+
+            content += `
+                <button onclick="window.toggleTheme()" class="theme-toggle group" title="Gece/Gündüz Modu">
+                    <i data-lucide="${state.isDark ? 'sun' : 'moon'}" class="w-7 h-7 ${state.isDark ? 'text-amber-300' : 'text-slate-600'} transition-transform group-hover:rotate-12"></i>
+                </button>
+            `;
+
+            appElement.innerHTML = content;
+            lucide.createIcons();
+        };
+
+        // Sistemi Başlat
+        initCloudApp();
+    </script>
+</body>
+</html>
