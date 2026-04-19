@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soru Çöz - Premium Edition (Cloud)</title>
-    <!-- Tailwind CSS ve Lucide İkonları -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -113,11 +112,11 @@
         .btn-press:active { transform: scale(0.97); }
         
         .lesson-card { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .correct-pop { animation: correct-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; background: rgba(16, 185, 129, 0.04) !important; border-color: #10b981 !important; box-shadow: 0 4px 20px -5px rgba(16, 185, 129, 0.3); }
-        @keyframes correct-pop { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-        .wrong-shake { animation: wrong-shake 0.4s cubic-bezier(.36,.07,.19,.97) both; background: rgba(239, 68, 68, 0.08) !important; border-color: #ef4444 !important; box-shadow: 0 4px 20px -5px rgba(239, 68, 68, 0.3); }
-        @keyframes wrong-shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-3px, 0, 0); } 40%, 60% { transform: translate3d(3px, 0, 0); } }
-        
+        .lesson-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px -15px rgba(99, 102, 241, 0.12);
+        }
+
         .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -146,20 +145,24 @@
         }
         html.dark .theme-toggle { background: #1e293b; border-color: #334155; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); }
         .theme-toggle:active { transform: scale(0.9); }
+
+        /* Efekt CSS Sınıfları */
+        .correct-pop { animation: correct-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; background: rgba(16, 185, 129, 0.04) !important; border-color: #10b981 !important; box-shadow: 0 4px 20px -5px rgba(16, 185, 129, 0.3); }
+        @keyframes correct-pop { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        .wrong-shake { animation: wrong-shake 0.4s cubic-bezier(.36,.07,.19,.97) both; background: rgba(239, 68, 68, 0.08) !important; border-color: #ef4444 !important; box-shadow: 0 4px 20px -5px rgba(239, 68, 68, 0.3); }
+        @keyframes wrong-shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-3px, 0, 0); } 40%, 60% { transform: translate3d(3px, 0, 0); } }
     </style>
 </head>
 <body class="min-h-screen text-slate-800">
 
     <div class="bg-animated"></div>
     <div id="app" class="min-h-screen flex flex-col">
-        <!-- Başlangıç Yükleme Ekranı -->
         <div class="min-h-screen flex flex-col items-center justify-center">
             <div class="w-20 h-20 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-6"></div>
             <div class="text-xl font-bold text-indigo-600 tracking-widest uppercase animate-pulse">Sistem Başlatılıyor...</div>
         </div>
     </div>
 
-    <!-- Firebase SDK Import -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -436,6 +439,14 @@
         window.handleLessonClick = (id) => {
             state.viewingCategoryPath.push(id);
             window.render();
+        };
+
+        // Yeni Eklenti: Geri Dön Butonu Fonksiyonu
+        window.goBackCategory = () => {
+            if (state.viewingCategoryPath.length > 0) {
+                state.viewingCategoryPath.pop();
+                window.render();
+            }
         };
 
         window.handleAnswer = (idx, event = null) => {
@@ -831,9 +842,16 @@
                             <p class="text-xl text-slate-500 font-medium">Öğrenme yolculuğuna başla.</p>
                         </div>
 
-                        <!-- Breadcrumbs -->
-                        <div class="flex items-center gap-2 mb-8 text-sm font-bold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap pb-2 custom-scrollbar bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-                            ${breadcrumbs}
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                            <div class="flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap pb-2 custom-scrollbar bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex-1">
+                                ${breadcrumbs}
+                            </div>
+                            
+                            ${state.viewingCategoryPath.length > 0 ? `
+                            <button onclick="window.goBackCategory()" class="btn-press flex items-center justify-center gap-2 bg-white dark:bg-slate-800 px-6 py-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors whitespace-nowrap">
+                                <i data-lucide="arrow-left" class="w-5 h-5"></i> Bir Üst Klasöre Dön
+                            </button>
+                            ` : ''}
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-reveal">
@@ -1287,7 +1305,6 @@
                         <div class="p-10 text-center text-rose-500 font-bold glass-card rounded-[3rem] border border-slate-100 dark:border-slate-700">Bu sayfayı görüntüleme yetkiniz yok.</div>
                     `}
 
-                    <!-- DELETE MODAL (Lessons) -->
                     ${state.deleteConfirmId ? `
                     <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
                         <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-[5rem] shadow-2xl p-20 text-center animate-reveal">
@@ -1304,7 +1321,6 @@
                     </div>
                     ` : ''}
 
-                    <!-- BULK DELETE QUESTIONS MODAL -->
                     ${state.bulkDeleteConfirm ? `
                     <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
                         <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-[5rem] shadow-2xl p-20 text-center animate-reveal">
